@@ -3,6 +3,7 @@ const UserModel = require('../database/models/user.model');
 const jwt = require("jsonwebtoken");
 require('dotenv').config()
 const asyncHandler = require('express-async-handler');
+const { AccountModel } = require('../database/models/account.model');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -34,7 +35,13 @@ const registerUser = async (req, res) => {
             password: req.body.password,
         })
 
+
         const { _id } = user;
+
+        await AccountModel.create({
+            user: _id,
+            balance: parseInt(Math.random() * 10000)
+        })
 
         const token = jwt.sign({ _id }, JWT_SECRET);
 
