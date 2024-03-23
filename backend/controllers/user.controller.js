@@ -20,12 +20,14 @@ const registerUser = async (req, res) => {
 
         if (!success) {
             res.status(411).json({ message: "Incorrect inputs" })
+            return;
         }
 
         const userExists = await UserModel.findOne({ username: req.body.username });
 
         if (userExists) {
-            res.status(411).json({ message: "Email already exists" })
+            res.status(411).json({ message: "Email already exists" });
+            return;
         }
 
         const user = await UserModel.create({
@@ -52,7 +54,8 @@ const registerUser = async (req, res) => {
 
 
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status
+            (401).json({ message: error.message })
     }
 
 }
@@ -86,6 +89,12 @@ const authenticateUser = async (req, res) => {
 
             res.status(200).json({
                 token: token
+            })
+        }
+
+        else {
+            res.status(401).json({
+                message: "Invalid credentials"
             })
         }
 
