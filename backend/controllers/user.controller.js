@@ -132,4 +132,27 @@ const updateUser = asyncHandler(async (req, res) => {
     }
 })
 
-module.exports = { registerUser, authenticateUser, updateUser }
+const getAllUsers = asyncHandler(async (req, res) => {
+    const { filter } = req.query;
+    console.log(filter);
+    try {
+        if (filter) {
+            const users = await UserModel.find({
+                "username": { $regex: filter, $options: 'i' },
+                "_id": { $ne: req.userId }
+            })
+
+            res.status(200).json(users);
+        }
+
+        else {
+            const users = await UserModel.find({
+                "_id": { $ne: req.userId }
+            })
+            res.status(200).json(users);
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
+})
+module.exports = { registerUser, authenticateUser, getAllUsers, updateUser }
